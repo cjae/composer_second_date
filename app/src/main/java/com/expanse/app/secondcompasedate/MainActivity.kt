@@ -3,87 +3,104 @@ package com.expanse.app.secondcompasedate
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.*
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.expanse.app.secondcompasedate.ui.theme.SecondCompaseDateTheme
+import com.google.accompanist.coil.rememberCoilPainter
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MyApp {
-                MyScreenContent()
-            }
+            SecondCompaseDateTheme { LayoutsCodelab() }
         }
     }
 }
 
 @Composable
-fun MyApp(content: @Composable () -> Unit) {
-    SecondCompaseDateTheme {
-        Surface(color = Color.Yellow) {
-            content()
+fun LayoutsCodelab() {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(text = "LayoutsCodelab") }
+            )
         }
-    }
-}
-
-@Composable
-fun MyScreenContent(names: List<String> = List(1000) { "Hello Android #$it" }) {
-    val counterState = remember { mutableStateOf(0) }
-
-    Column(modifier = Modifier.fillMaxHeight()) {
-        NameList(names, Modifier.weight(1f))
-        Counter(
-            count = counterState.value,
-            updateCount = { newCount ->
-                counterState.value = newCount
-            }
-        )
-    }
-}
-
-@Composable
-fun NameList(names: List<String>, modifier: Modifier = Modifier) {
-    LazyColumn(modifier = modifier) {
-        items(items = names) { name ->
-            Greeting(name = name)
-            Divider(color = Color.Black)
-        }
-    }
-}
-
-@Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!", modifier = Modifier.padding(24.dp))
-}
-
-@Composable
-fun Counter(count: Int, updateCount: (Int) -> Unit) {
-    Button(
-        onClick = { updateCount(count + 1) },
-        colors = ButtonDefaults.buttonColors(
-            backgroundColor = if (count > 5) Color.Green else Color.White
-        )
     ) {
-        Text("I've been clicked $count times")
+        ScrollingList()
+    }
+}
+
+@Composable
+fun ScrollingList() {
+    val listSize = 100
+    // We save the scrolling position with this state
+    val scrollState = rememberLazyListState()
+    // We save the coroutine scope where our animated scroll will be executed
+    val coroutineScope = rememberCoroutineScope()
+
+    Column {
+        Row {
+            Button(onClick = {
+                coroutineScope.launch {
+                    // 0 is the first item index
+                    scrollState.animateScrollToItem(0)
+                }
+            }) {
+                Text("Scroll to the top")
+            }
+
+            Button(onClick = {
+                coroutineScope.launch {
+                    // listSize - 1 is the last index of the list
+                    scrollState.animateScrollToItem(listSize - 1)
+                }
+            }) {
+                Text("Scroll to the end")
+            }
+        }
+
+        LazyColumn(state = scrollState) {
+            items(listSize) {
+                ImageListItem(it)
+            }
+        }
+    }
+}
+
+@Composable
+fun ImageListItem(index: Int) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Image(
+            painter = rememberCoilPainter("https://developer.android.com/images/brand/Android_Robot.png"),
+            contentDescription = "Android Logo",
+            modifier = Modifier.size(50.dp)
+        )
+        Spacer(Modifier.width(10.dp))
+        Text("Item #$index", style = MaterialTheme.typography.subtitle1)
     }
 }
 
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
-    MyApp {
-        MyScreenContent()
+    SecondCompaseDateTheme {
+        LayoutsCodelab()
     }
 }

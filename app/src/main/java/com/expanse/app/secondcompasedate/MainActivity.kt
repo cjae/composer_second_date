@@ -8,8 +8,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
@@ -40,26 +42,22 @@ fun LayoutsCodelab() {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = {
-                    Text(text = "LayoutsCodelab")
-                },
-                actions = {
-                    IconButton(onClick = { /* doSomething() */ }) {
-                        Icon(Icons.Filled.Favorite, contentDescription = null)
-                    }
-                }
+                title = { Text(text = "LayoutsCodelab") }
             )
         }
-    ) { innerPadding ->
-        BodyContent(Modifier.padding(innerPadding).padding(8.dp))
+    ) {
+        SimpleList()
     }
 }
 
 @Composable
-fun BodyContent(modifier: Modifier = Modifier) {
-    Column(modifier = modifier) {
-        Text(text = "Hi there!")
-        Text(text = "Thanks for going through the Layouts codelab")
+fun SimpleList() {
+    val scrollState = rememberScrollState()
+
+    Column(Modifier.verticalScroll(scrollState)) {
+        repeat(100) {
+            Text("Item #$it")
+        }
     }
 }
 

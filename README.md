@@ -7,4 +7,4 @@ The Composer Tutorial.
 Never commit directly to master. Create a feature branch, get it reviewed before merging to `master`
 
 #### Useful links
-- [Figma](https://developer.android.com/courses/pathways/compose)
+- [Android JetPack Compose](https://developer.android.com/courses/pathways/compose)
